@@ -1,2 +1,9 @@
 # vue-xiaohongshu
-vue仿小红书app
+
+> A Vue.js project of xiaohongshu
+
+## 手势
+ npm install vue-awesome-swiper --save
+ 
+## axios请求数据
+ npm install axios
