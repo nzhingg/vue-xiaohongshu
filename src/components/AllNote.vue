@@ -4,7 +4,7 @@
     <NoteNav />
     <div class="note-box">
       <div class="note-view">
-          <div class="note" v-for="note in leftNotes" :key="note.id">
+          <div class="note" v-for="note in leftNotes" :key="note.id" v-on:searchNotes="text($event)">
             <router-link v-bind:to="'/note/' + note.id">
               <div class="note_info">
                 <img class="note_info__cover" :src="note.image[0].img" alt="">
@@ -21,7 +21,7 @@
                   </div>
                 </router-link>
                 <div class="like">
-                  <i class="iconfont icon-aixin"></i>
+                  <i class="iconfont icon-aixin" :class="{liked: islike}" @click="isliked(note.id)"></i>
                   <span>{{note.like}}</span>
                 </div>
               </div>
@@ -60,29 +60,37 @@
 import axios from 'axios'
 import NoteHead from './NoteHead'
 import NoteNav from './NoteNav'
+import {mapActions} from 'vuex'
 
 export default {
   name: "all-note",
   data() {
     return {
-      // notes: this.$store.state.noteDetails
-      notes: []
+      notes: [],
+      // islike: false
     }
   },
   components:{
     NoteHead,
     NoteNav
   },
+  methods:{
+    // isliked(id){
+    //   this.islike = !this.islike;
+    //   console.log(id)
+    // },
+    // text(data){
+    // }
+    ...mapActions([
+      "isliked"
+    ])
+  },
   created() {
     var that = this;
     axios.get('https://www.easy-mock.com/mock/5aa1e2e4edefdc232c585994/getInfo/data')
     .then(function(data) {
       that.notes = data.data.data.noteDetails;
-      // console.log(that.notes);
-      // return data.data.data.noteDetails;
     });
-    // console.log(nnn)
-    // console.log(this.$store.state.noteDetails)
   },
   computed: {
     leftNotes() {
@@ -94,7 +102,16 @@ export default {
       return this.notes.filter((note) => {
         return note.page === "right";
       })
-    }
+    },
+    isLike(){
+      //获取store中的关注列表
+      // var likeLists = this.$store.getters.unLike;
+      // // 获取当前主页是否关注的关注列表
+      // var result = likeLists.filter(likeList => {
+      //   return this.userName === likeList.userName
+      // })
+      // return result[0].isFollow;
+    },
   }
 }
 </script>
@@ -109,6 +126,7 @@ export default {
 }
 #all-note a{
   text-decoration: none;
+  color:#000;
 }
 .note-box{
   width: 10rem;
@@ -187,5 +205,8 @@ export default {
 }
 .like i{
   margin-right: -.053333rem /* 4/75 */;
+}
+.liked{
+  color: #ff2741;
 }
 </style>
