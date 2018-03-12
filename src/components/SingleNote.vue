@@ -25,7 +25,8 @@
             <img :src="note[0].userNameIcon" class="userName-icon" alt="">
           </div>
         </router-link>
-        <button class="follow">+关注</button>
+        <button class="follow" v-if="!unFollow" @click="following(note[0].userName)">+关注</button>
+        <button class="followed" v-if="unFollow" @click="following(note[0].userName)">已关注</button>
       </div>
       <div class="center_noteContent">
         <div class="noteContent_title">{{note[0].title}}</div>
@@ -49,6 +50,8 @@
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
 import 'swiper/dist/css/swiper.css'
 import axios from 'axios'
+import {mapGetters} from 'vuex'
+import {mapActions} from 'vuex'
 
 export default {
   name:"single-note",
@@ -68,15 +71,32 @@ export default {
       note:[]
     }
   },
+  methods:{
+    ...mapActions([
+      "following"
+    ])
+  },
+  computed: {
+    unFollow(){
+      //获取store中的关注列表
+      var followLists = this.$store.getters.unFollow;
+      // 获取当前主页是否关注的关注列表
+      var result = followLists.filter(followList => {
+        return this.id === followList.id
+      })
+      return result[0].isFollow;
+    },
+  },
   created(){
     var that = this;
+    // 根据路由中返回的id值来筛选当前页面的数据
     axios.get("https://www.easy-mock.com/mock/5aa1e2e4edefdc232c585994/getInfo/data")
       .then(function(data) {
       var notes = data.data.data.noteDetails;
       that.note = notes.filter((note) => {
         return note.id === that.id;
       })
-      })
+    });
   },
   components: {
     swiper,
@@ -139,7 +159,7 @@ export default {
   right: .346667rem /* 26/75 */;
   bottom: 0;
   height: .013333rem /* 1/75 */;
-  border-bottom: 1px solid #F0F0F0;
+  border-bottom: .013333rem /* 1/75 */ solid #F0F0F0;
   /* 1px在手机上太粗 */
   transform: scaleY(0.5);
 }
@@ -173,6 +193,17 @@ export default {
   font-size: .32rem /* 24/75 */;
   border: 1px solid #FF7F8E;
   color: #FF7F8E;
+  background: white;
+  border-radius: .2rem /* 15/75 */;
+}
+.followed{
+  width: 2.026667rem /* 152/75 */;
+  height: .773333rem /* 58/75 */;
+  float: right;
+  margin-left: 1.4rem;
+  font-size: .32rem /* 24/75 */;
+  border: 1px solid #CCCCCC;
+  color: #CCCCCC;
   background: white;
   border-radius: .2rem /* 15/75 */;
 }
