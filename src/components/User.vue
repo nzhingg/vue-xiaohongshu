@@ -33,8 +33,8 @@
         </div>
       </div>
       <div class="user_moreInfo">
-        <div class="followBtn" v-if="!unFollow" @click="following">关注</div>
-        <div class="cancleBtn" v-if="unFollow" @click="following">取消关注</div>
+        <div class="followBtn" v-if="!unFollow" @click="following(notes[0].userName)">关注</div>
+        <div class="cancleBtn" v-if="unFollow" @click="following(notes[0].userName)">取消关注</div>
         <p class="userLocation">
           <span class="location">{{notes[0].location}}</span>
           <span class="level">等级：{{notes[0].level}}</span>
@@ -94,21 +94,24 @@
 
 <script>
 import axios from 'axios'
+import {mapGetters} from 'vuex'
+import {mapActions} from 'vuex'
 
 export default {
   name: "user",
   data() {
     return {
-      // notes: this.$store.state.noteDetails
       notes: [],
       userName: this.$route.params.userName,
-      unFollow: false
+      id: 0,
+      // unFollowing: false
+      // unFollow: false
     }
   },
   methods:{
-    following(){
-      this.unFollow = !this.unFollow;
-    }
+    ...mapActions([
+      "following"
+    ])
   },
   created() {
     var that = this;
@@ -118,7 +121,6 @@ export default {
       that.notes = notesArray.filter(note => {
         return note.userName === that.userName
       })
-      console.log(that.notes)
     });
   },
   computed: {
@@ -131,7 +133,17 @@ export default {
       return this.notes.filter((note) => {
         return note.page === "right";
       })
-    }
+    },
+    unFollow(){
+      //获取store中的关注列表
+      var followLists = this.$store.getters.unFollow;
+      // 获取当前主页是否关注的关注列表
+      var result = followLists.filter(followList => {
+        return this.userName === followList.userName
+      })
+      return result[0].isFollow;
+    },
+    // ...mapGetters(["unFollow"])
   }
 }
 </script>
@@ -266,7 +278,7 @@ export default {
   background: #FFF;
   padding-top: .08rem /* 6/75 */;
   border-radius: .08rem;
-  border: .013333rem /* 1/75 */ solid #5B92E0;
+  border: .026667rem /* 2/75 */ solid #5B92E0;
   font-size: .3rem;
   color: #5B92E0;
   line-height: .6rem;
