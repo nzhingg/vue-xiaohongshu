@@ -28,9 +28,9 @@ export default {
       swiperOption: {
         slidesPerView : 5,
           spaceBetween : 10,
-          slideToClickedSlide: true,
+          // slideToClickedSlide: true,
           direction : 'horizontal',
-      }
+      }, 
     }
   }
 }
@@ -50,7 +50,7 @@ export default {
   justify-content: center;
   width: 100%;
   height: .986667rem /* 74/75 */;
-  /* background-color: violet; */
+  /* margin-bottom: 1.333333rem ; */
 }
 .nav_item{
   display: inline-block;

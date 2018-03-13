@@ -6,7 +6,7 @@
           <router-link to="/" exact><div class="list2">发现</div></router-link>
           <router-link to="/shop" exact><div class="list3">商城</div></router-link>
         </div>
-        <input type="text" placeholder="搜索笔记，商城和用户">
+        <input type="text" placeholder="搜索笔记，商城和用户" v-model="search" @keyup.enter="searchText">
       </div>
     </div>
 </template>
@@ -16,10 +16,13 @@ export default{
   name:"note-head",
   data() {
     return {
+      search:""
     }
   },
   methods:{
-   
+    searchText(){
+      this.$emit("searchNotes","this.search");
+    }
   }
 }
 </script>

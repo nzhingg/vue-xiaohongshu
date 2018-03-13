@@ -137,6 +137,7 @@ export default {
     unFollow(){
       //获取store中的关注列表
       var followLists = this.$store.getters.unFollow;
+      console.log(followLists)
       // 获取当前主页是否关注的关注列表
       var result = followLists.filter(followList => {
         return this.userName === followList.userName
