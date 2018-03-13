@@ -4,7 +4,7 @@
     <NoteNav />
     <div class="note-box">
       <div class="note-view">
-          <div class="note" v-for="note in leftNotes" :key="note.id" v-on:searchNotes="text($event)">
+          <div class="note" v-for="note in leftNotes" :key="note.title" v-on:searchNotes="text($event)">
             <router-link v-bind:to="'/note/' + note.id">
               <div class="note_info">
                 <img class="note_info__cover" :src="note.image[0].img" alt="">
@@ -21,14 +21,15 @@
                   </div>
                 </router-link>
                 <div class="like">
-                  <i class="iconfont icon-aixin" :class="{liked: islike}" @click="isliked(note.id)"></i>
+                  <i class="iconfont icon-aixin" v-if="isLike" @click="isLiked(note.id)"></i>
+                  <i class="iconfont icon-aixin liked" v-if="!isLike" @click="isLiked(note.id)"></i>
                   <span>{{note.like}}</span>
                 </div>
               </div>
           </div>
       </div>
       <div class="note-view">
-        <div class="note" v-for="note in rightNotes" :key="note.id">
+        <div class="note" v-for="note in rightNotes" :key="note.title">
           <router-link v-bind:to="'/note/' + note.id">
             <div class="note_info">
               <img class="note_info__cover" :src="note.image[0].img" alt="">
@@ -60,14 +61,15 @@
 import axios from 'axios'
 import NoteHead from './NoteHead'
 import NoteNav from './NoteNav'
-import {mapActions} from 'vuex'
+// import {mapActions} from 'vuex'
 
 export default {
   name: "all-note",
   data() {
     return {
-      notes: [],
-      // islike: false
+      notes: [],//笔记列表
+      likeNotes: [],//喜欢的笔记的id数组,
+      isLike:true
     }
   },
   components:{
@@ -75,21 +77,40 @@ export default {
     NoteNav
   },
   methods:{
-    // isliked(id){
-    //   this.islike = !this.islike;
-    //   console.log(id)
-    // },
-    // text(data){
+    // ...mapActions([
+    //   "isLiked"
+    // ]),
+    isLiked(id){
+      this.$store.dispatch("isLiked",id);
+      this.likeNotes.push(id);
+      //获取点击之后的喜欢笔记列表
+      var likeLists = this.$store.getters.unLike;
+      var results = likeLists.filter(likeList => {
+        return likeList.id === id
+      });
+      // this.isLike = results[0].isLike
+      // console.log(likeLists)
+      // console.log(this.likeNotes)
+      this.isLike = !this.isLike;
+    }
+    // likeNote(id){
+    //   console.log(111);
+
+    //   console.log(id);
     // }
-    ...mapActions([
-      "isliked"
-    ])
   },
   created() {
     var that = this;
     axios.get('https://www.easy-mock.com/mock/5aa1e2e4edefdc232c585994/getInfo/data')
     .then(function(data) {
       that.notes = data.data.data.noteDetails;
+      var aaa = that.notes.map(note => {
+        return {
+          id: note.id,
+          likeNum: note.like
+        }
+      })
+      // console.log(aaa);
     });
   },
   computed: {
@@ -103,15 +124,28 @@ export default {
         return note.page === "right";
       })
     },
-    isLike(){
-      //获取store中的关注列表
-      // var likeLists = this.$store.getters.unLike;
-      // // 获取当前主页是否关注的关注列表
-      // var result = likeLists.filter(likeList => {
-      //   return this.userName === likeList.userName
-      // })
-      // return result[0].isFollow;
-    },
+    // isLike(){
+    //   //获取store中的关注列表
+    //   var likeLists = this.$store.getters.unLike;
+    //   // console.log(likeLists);
+    //   // 获取当前主页是否关注的关注列表
+    //   var results = likeLists.filter(likeList => {
+    //     return likeList.isLike === true
+    //   });
+    //   for(var i = 0;i < this.likeNotes.length;i++){
+    //     results.filter(result => {
+    //       return result.id === this.likeNotes[i]
+    //     })
+    //   }
+      // console.log(results)
+      // return results[0].isLike
+      // if(results[0].isLike){
+      //   return results[0].isLike
+      // }
+      // else{
+      //   return false
+      // }
+    // },
   }
 }
 </script>
