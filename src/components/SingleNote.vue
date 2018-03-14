@@ -32,8 +32,8 @@
         <div class="noteContent_title">{{note[0].title}}</div>
         <div class="noteContent_Text">{{note[0].article}}</div>
         <div class="noteContent_publishTime">{{note[0].publishTime}}</div>
-        <div class="noteContent_collectionTime">{{note[0].collectionTime}}</div>
-        <div class="noteContent_praiseTime">{{note[0].like}}</div>
+        <div class="noteContent_collectionNum">&nbsp;&nbsp;&nbsp;{{note[0].collectionNum}}次收藏</div>
+        <div class="noteContent_praiseTime">{{note[0].like}}次赞</div>
       </div>
     </div>
     </div>
@@ -163,6 +163,9 @@ export default {
   /* 1px在手机上太粗 */
   transform: scaleY(0.5);
 }
+.center_user a{
+  color: #000;
+}
 .user_head{
   float: left;
   display: inline-block;
@@ -225,7 +228,7 @@ export default {
   line-height: 170%;
   letter-spacing: .026667rem /* 2/75 */;
 }
-.noteContent_publishTime,.noteContent_collectionTime,.noteContent_praiseTime{
+.noteContent_publishTime,.noteContent_collectionNum,.noteContent_praiseTime{
   display: inline-block;
   color: #A7A7A7;
   font-size: .293333rem /* 22/75 */;
@@ -235,10 +238,10 @@ export default {
   margin-right: 3.466667rem /* 260/75 */;
   margin-bottom: .64rem /* 48/75 */;
 }
-.noteContent_collectionTime{
-  margin-right: 2rem;
+.noteContent_collectionNum,.noteContent_praiseTime{
+  float: right;
+  margin-top: .8rem /* 60/75 */;
 }
-
 .bottom_top{
   width: 100%;
   height: 1.306667rem /* 98/75 */;
