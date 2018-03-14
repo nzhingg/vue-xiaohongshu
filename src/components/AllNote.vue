@@ -3,9 +3,9 @@
     <NoteHead />
     <NoteNav />
     <div class="note-box">
-      <div class="note-view">
+      <div class="note-view-left">
           <div class="note" v-for="note in leftNotes" :key="note.title" v-on:searchNotes="text($event)">
-            <router-link v-bind:to="'/note/' + note.id">
+            <router-link :to="'/note/' + note.id">
               <div class="note_info">
                 <img class="note_info__cover" :src="note.image[0].img" alt="">
                 <p class="note_info__title">{{note.title}}</p>
@@ -28,7 +28,7 @@
               </div>
           </div>
       </div>
-      <div class="note-view">
+      <div class="note-view-right">
         <div class="note" v-for="note in rightNotes" :key="note.title">
           <router-link v-bind:to="'/note/' + note.id">
             <div class="note_info">
@@ -88,16 +88,11 @@ export default {
       var results = likeLists.filter(likeList => {
         return likeList.id === id
       });
-      // this.isLike = results[0].isLike
-      // console.log(likeLists)
-      // console.log(this.likeNotes)
-      this.isLike = !this.isLike;
+    },
+    text(search){
+      console.log(search);
+      console.log(111)
     }
-    // likeNote(id){
-    //   console.log(111);
-
-    //   console.log(id);
-    // }
   },
   created() {
     var that = this;
@@ -110,7 +105,6 @@ export default {
           likeNum: note.like
         }
       })
-      // console.log(aaa);
     });
   },
   computed: {
@@ -168,14 +162,19 @@ export default {
   overflow-x: auto;
   padding-top: .133333rem /* 10/75 */;
 }
-.note-view{
-  width: 4.533333rem /* 340/75 */;
+.note-view-left{
+  width: 4.666667rem /* 350/75 */;
   float: left;
-  margin: .08rem /* 6/75 */ .213333rem /* 16/75 */;
+  margin: .08rem /* 6/75 */ .186667rem /* 14/75 */;
+}
+.note-view-right{
+  width: 4.666667rem /* 350/75 */;
+  float: left;
+  margin: .08rem /* 6/75 */ .186667rem /* 14/75 */ 0.08rem 0;
 }
 .note{
   background-color: #fff;
-  width: 4.533333rem /* 340/75 */;
+  width: 4.666667rem /* 350/75 */;
   margin: 0  .053333rem /* 4/75 */ .24rem /* 18/75 */;
   box-shadow: 0 1px 2px 0 rgba(0,0,0,.1);
   border-radius: .16rem /* 12/75 */;
@@ -192,7 +191,7 @@ export default {
   text-decoration: none;
 }
 .note_info__cover{
-  width: 4.533333rem /* 340/75 */;
+  width: 4.666667rem /* 350/75 */;
   border-top-left-radius: .213333rem /* 16/75 */;
   border-top-right-radius: .213333rem /* 16/75 */;
 }
