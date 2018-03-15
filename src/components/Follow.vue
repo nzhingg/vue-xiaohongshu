@@ -1,22 +1,27 @@
 <template>
   <div id="follow">
     <NoteHead />
-    <div class="followed" v-for="note in notes" :key="note.id">
-      <div class="following_user">
-        <div class="following_info">
-          <div class="avatar">
-            <img :src="note.headPortrait" alt="">
+    <div class="empty" v-if="haveFollow">
+      没有关注任何作者哦！！快去关注吧
+    </div>
+    <div class="followed" v-if="!haveFollow" v-for="note in notes" :key="note.id">
+      <router-link :to="'/note/' + note.id">
+        <div class="following_user">
+          <div class="following_info">
+            <div class="avatar">
+              <img :src="note.headPortrait" alt="">
+            </div>
+            <span class="userName">{{note.userName}}</span>
           </div>
-          <span class="userName">{{note.userName}}</span>
+          <div class="covers">
+            <img :src="note.image[0].img" alt="">
+            <img :src="note.image[1].img" alt="1">
+            <img :src="note.image[2].img" alt="1">
+          </div>
+          <div class="title">{{note.title}}</div>
+          <div class="article">{{note.article}}</div>
         </div>
-        <div class="covers">
-          <img :src="note.image[0].img" alt="">
-          <!-- <img :src="note.image[1].img" alt="1">
-          <img :src="note.image[2].img" alt="1"> -->
-        </div>
-        <div class="title">{{note.title}}</div>
-        <div class="article">{{note.article}}</div>
-      </div>
+      </router-link>
       <div class="bottom">
         <div class="like">
           <i class="iconfont icon-aixin"></i>
@@ -47,25 +52,41 @@ export default {
     }
   },
   created(){
-    var that = this;
     var followLists = this.$store.getters.unFollow;
+    // 获取当前作者的信息
     var Lists = followLists.filter(followList => {
       return followList.isFollow;
     })
     console.log(Lists);
+    var searchText = this.$store.getters.searchContent;
+    var that = this;
     axios.get('https://www.easy-mock.com/mock/5aa1e2e4edefdc232c585994/getInfo/data')
     .then(function(data) {
-      // that.notes = data.data.data.noteDetails;
+      // 获取笔记信息
       var notesLists = data.data.data.noteDetails;
-      for(var i = 0;i < Lists.length; i++){
-        // if(Lists[i].)
-        for(var j = 0;j< notesLists.length; j++){
-          if(Lists[i].userName === notesLists[j].userName){
-            that.notes.push(notesLists[j]);
+      // 根据是否关注isFollow来获取已关注作者的信息
+      Lists.filter(list => {
+        for(var i = 0;i< notesLists.length; i++) {
+          if(list.userName === notesLists[i].userName) {
+            if(searchText) {
+              
+            }else {
+              that.notes.push(notesLists[i]);
+            }
           }
         }
-      }
+      })
     });
+  },
+  computed: {
+    haveFollow(){
+      // 判断列表中是否有数据，如果没有数据 则提示关注笔记作业
+      if(this.notes.length > 0){
+        return false
+      }else {
+        return true
+      }
+    }
   },
   components: {
     NoteHead,
@@ -74,6 +95,16 @@ export default {
 </script>
 
 <style scoped>
+.empty{
+  width: 10rem;
+  position: relative;
+  top: 2.613333rem /* 196/75 */;
+  background-color: #FFF;
+  font-size: .533333rem /* 40/75 */;
+  color: #FF2640;
+  font-weight: 1000;
+  text-align: center;
+}
 #follow{
   background-color: #F5F8FA;
 }
