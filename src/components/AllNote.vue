@@ -4,7 +4,7 @@
     <NoteNav />
     <div class="note-box">
       <div class="note-view-left">
-          <div class="note" v-for="note in leftNotes" :key="note.title" v-on:searchNotes="text($event)">
+          <div class="note" v-for="(note,index) in leftNotes" :key="note.title">
             <router-link :to="'/note/' + note.id">
               <div class="note_info">
                 <img class="note_info__cover" :src="note.image[0].img" alt="">
@@ -21,15 +21,15 @@
                   </div>
                 </router-link>
                 <div class="like">
-                  <i class="iconfont icon-aixin" v-if="isLike" @click="isLiked(note.id)"></i>
-                  <i class="iconfont icon-aixin liked" v-if="!isLike" @click="isLiked(note.id)"></i>
+                  <i class="iconfont icon-aixin notLike" v-if="!note.isLike" @click="isLiked_left(note.id,index)"></i>
+                  <i class="iconfont icon-xin1 like" v-if="note.isLike" @click="isLiked_left(note.id,index)"></i>
                   <span>{{note.like}}</span>
                 </div>
               </div>
           </div>
       </div>
       <div class="note-view-right">
-        <div class="note" v-for="note in rightNotes" :key="note.title">
+        <div class="note" v-for="(note,index) in rightNotes" :key="note.title">
           <router-link v-bind:to="'/note/' + note.id">
             <div class="note_info">
               <img class="note_info__cover" :src="note.image[0].img" alt="">
@@ -46,8 +46,9 @@
               </div>
             </router-link>
               <div class="like">
-                <i class="iconfont icon-aixin"></i>
-                <span>{{note.like}}</span>
+                  <i class="iconfont icon-aixin notLike" v-if="!note.isLike" @click="isLiked_right(note.id,index)"></i>
+                  <i class="iconfont icon-xin1 like" v-if="note.isLike" @click="isLiked_right(note.id,index)"></i>
+                  <span>{{note.like}}</span>
               </div>
             </div>
         </div>
@@ -61,15 +62,18 @@
 import axios from 'axios'
 import NoteHead from './NoteHead'
 import NoteNav from './NoteNav'
-// import {mapActions} from 'vuex'
 
 export default {
   name: "all-note",
   data() {
     return {
       notes: [],//笔记列表
-      likeNotes: [],//喜欢的笔记的id数组,
-      isLike:true
+      likeNotes:[]
+    }
+  },
+  watch:{
+    likeNotes:function(){
+      console.log('change')
     }
   },
   components:{
@@ -77,21 +81,27 @@ export default {
     NoteNav
   },
   methods:{
-    // ...mapActions([
-    //   "isLiked"
-    // ]),
-    isLiked(id){
-      this.$store.dispatch("isLiked",id);
-      this.likeNotes.push(id);
-      //获取点击之后的喜欢笔记列表
-      var likeLists = this.$store.getters.unLike;
-      var results = likeLists.filter(likeList => {
-        return likeList.id === id
-      });
+    isLiked_left(id,index){
+      this.leftNotes[index].isLike = !this.leftNotes[index].isLike;
+      if(this.leftNotes[index].isLike) {
+        this.leftNotes[index].like++
+      }else{
+        this.leftNotes[index].like--
+      }
+      //把点赞了的笔记的信息放入store中做统一整理
+      this.$store.dispatch("likeNotes",{"id":id,"likeNum":this.leftNotes[index].like,"isLike":this.leftNotes[index].isLike});
+      
     },
-    text(search){
-      console.log(search);
-      console.log(111)
+
+    isLiked_right(id,index){
+      this.rightNotes[index].isLike = !this.rightNotes[index].isLike;
+      if(this.rightNotes[index].isLike) {
+        this.rightNotes[index].like++
+      }else{
+        this.rightNotes[index].like--
+      }
+      this.$store.dispatch("likeNotes",{"id":id,"likeNum":this.rightNotes[index].like,"isLike":this.rightNotes[index].isLike});
+    
     }
   },
   created() {
@@ -99,6 +109,7 @@ export default {
     axios.get('https://www.easy-mock.com/mock/5aa1e2e4edefdc232c585994/getInfo/data')
     .then(function(data) {
       that.notes = data.data.data.noteDetails;
+      console.log(that.likeNotes)
       var aaa = that.notes.map(note => {
         return {
           id: note.id,
@@ -106,40 +117,31 @@ export default {
         }
       })
     });
+    
+
   },
   computed: {
     leftNotes() {
+      var searchText = this.$store.getters.searchContent;
       return this.notes.filter((note) => {
-        return note.page === "left";
+        if(searchText) {
+          // 根据输入搜索框中的内容来筛选数据
+          return (note.title.match(searchText) || note.userName.match(searchText) ) && note.page === "left";
+        }else {
+          return note.page === "left";
+        }
       })
     },
     rightNotes() {
+      var searchText = this.$store.getters.searchContent;
       return this.notes.filter((note) => {
-        return note.page === "right";
+        if(searchText) {
+          return (note.title.match(searchText) || note.userName.match(searchText) ) && note.page === "right";
+        }else {
+          return note.page === "right";
+        }
       })
-    },
-    // isLike(){
-    //   //获取store中的关注列表
-    //   var likeLists = this.$store.getters.unLike;
-    //   // console.log(likeLists);
-    //   // 获取当前主页是否关注的关注列表
-    //   var results = likeLists.filter(likeList => {
-    //     return likeList.isLike === true
-    //   });
-    //   for(var i = 0;i < this.likeNotes.length;i++){
-    //     results.filter(result => {
-    //       return result.id === this.likeNotes[i]
-    //     })
-    //   }
-      // console.log(results)
-      // return results[0].isLike
-      // if(results[0].isLike){
-      //   return results[0].isLike
-      // }
-      // else{
-      //   return false
-      // }
-    // },
+    }
   }
 }
 </script>
@@ -239,7 +241,7 @@ export default {
 .like i{
   margin-right: -.053333rem /* 4/75 */;
 }
-.liked{
-  color: #ff2741;
+.icon-xin1{
+  color: red
 }
 </style>
