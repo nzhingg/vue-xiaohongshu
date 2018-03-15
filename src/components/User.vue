@@ -33,8 +33,8 @@
         </div>
       </div>
       <div class="user_moreInfo">
-        <div class="followBtn" v-if="!unFollow" @click="following(notes[0].userName)">关注</div>
-        <div class="cancleBtn" v-if="unFollow" @click="following(notes[0].userName)">取消关注</div>
+        <div class="followBtn" v-if="!unFollow" @click="following(notes[0].userName,notes[0].id)">关注</div>
+        <div class="cancleBtn" v-if="unFollow" @click="following(notes[0].userName,notes[0].id)">取消关注</div>
         <p class="userLocation">
           <span class="location">{{notes[0].location}}</span>
           <span class="level">等级：{{notes[0].level}}</span>
@@ -104,14 +104,13 @@ export default {
       notes: [],
       userName: this.$route.params.userName,
       id: 0,
-      // unFollowing: false
-      // unFollow: false
     }
   },
   methods:{
-    ...mapActions([
-      "following"
-    ])
+    following(userName,id){
+      // 往store中提交关注用户的信息
+      this.$store.dispatch("following",{"userName": userName,"id": id,"isFollow": this.unFollow});
+    }
   },
   created() {
     var that = this;
@@ -137,14 +136,18 @@ export default {
     unFollow(){
       //获取store中的关注列表
       var followLists = this.$store.getters.unFollow;
-      console.log(followLists)
-      // 获取当前主页是否关注的关注列表
-      var result = followLists.filter(followList => {
-        return this.userName === followList.userName
-      })
-      return result[0].isFollow;
+      //判断是否关注过用户，没有则为false
+      if(followLists.length > 0){
+        var result = followLists.filter(followList => {
+          return this.userName === followList.userName
+        })
+        return result[0].isFollow;
+      }else {
+        return false
+      }
+      
+      
     },
-    // ...mapGetters(["unFollow"])
   }
 }
 </script>
