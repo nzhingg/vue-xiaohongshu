@@ -21,7 +21,7 @@ export default{
   },
   methods:{
     searchText(){
-      this.$emit("searchNotes",this.search);
+      this.$store.dispatch("searchText",this.search);
     }
   }
 }
