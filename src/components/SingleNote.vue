@@ -33,7 +33,7 @@
         <div class="noteContent_Text">{{note[0].article}}</div>
         <div class="noteContent_publishTime">{{note[0].publishTime}}</div>
         <div class="noteContent_collectionNum">&nbsp;&nbsp;&nbsp;{{note[0].collectionNum}}次收藏</div>
-        <div class="noteContent_praiseTime">{{note[0].like}}次赞</div>
+        <div class="noteContent_praiseTime">{{likeNum || note[0].like}}次赞</div>
       </div>
     </div>
     </div>
@@ -72,20 +72,34 @@ export default {
     }
   },
   methods:{
-    ...mapActions([
-      "following"
-    ])
+    following(user) {
+      this.$store.dispatch("following",{"userName": user,"id": this.id,"isFollow": this.unFollow});
+    }
   },
   computed: {
     unFollow(){
       //获取store中的关注列表
       var followLists = this.$store.getters.unFollow;
-      // 获取当前主页是否关注的关注列表
-      var result = followLists.filter(followList => {
-        return this.id === followList.id
-      })
-      return result[0].isFollow;
+      // console.log(followLists)
+      if(followLists.length > 0){
+        // 获取当前主页是否关注的关注列表
+        var result = followLists.filter(followList => {
+          return this.id === followList.id
+        })
+        return result[0].isFollow;
+      }else{
+        return false
+      }
     },
+    likeNum(){
+      var likeNotesLists = this.$store.getters.likeNotesLists;
+      var result = likeNotesLists.reduce((id,likeNote) => {
+        if(likeNote.id === id){
+          return likeNote.likeNum
+        }
+      },this.id)
+      return result;
+    }
   },
   created(){
     var that = this;
