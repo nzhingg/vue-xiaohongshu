@@ -1,9 +1,13 @@
-# vue-xiaohongshu
+## 用vue做一个好看的小红书
 
-> A Vue.js project of xiaohongshu
+## 技术栈
+- vue全家桶(vue,vue-router,vuex)
+- easy-mock造数据
+- axios请求数据
 
-## 手势
- npm install vue-awesome-swiper --save
- 
-## axios请求数据
- npm install axios
+##已实现功能
+- 笔记页面及跳转到笔记详情页
+- 搜索笔记或者用户
+- 关注用户并且在关注页面展示已关注的用户
+
+## 项目展示截图
