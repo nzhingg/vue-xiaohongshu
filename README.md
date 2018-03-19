@@ -4,6 +4,7 @@
 - vue全家桶(vue,vue-router,vuex)
 - easy-mock造数据
 - axios请求数据
+- vue-awesome-swiper组件实现图片滑动
 
 ##已实现功能
 - 笔记页面及跳转到笔记详情页
